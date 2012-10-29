@@ -99,8 +99,9 @@ void NESController::toggleRecording()
 {
   recording = !recording;
   
-  if (!recording)
+  if (recording)
   {
+    last_button_time = millis();
     for(int i = 0; i < RECORD_BUFFER_MAX; i++)
     {
       if(recording_buffer[i] != 0)
@@ -109,10 +110,6 @@ void NESController::toggleRecording()
         recording_buffer[i] = 0;
       }
     }
-  }
-  else
-  {
-    last_button_time = millis();
   }
 }
 
