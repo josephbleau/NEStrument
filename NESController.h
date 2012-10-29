@@ -11,18 +11,44 @@
 #define BTN_LEFT    6
 #define BTN_RIGHT   7
 
+namespace NESControllerDummies
+{
+  void dummyKeyPressed(int);
+  void dummyKeyReleased(int);
+}
+
 class NESController {
   int data_line;
   int clock_line;
   int latch_line;
   
+  void (*keyPressed)(int);
+  void (*keyReleased)(int);
+  
+  int recording_timer;
+  int recording;
+  int* recording_buffer[250];
+  int buffer_position;
+  
+  int* current_state;
+  int* last_state;
+  
+  void pulse(int line);
+  int* pollState();  
+  
 public:
   NESController(int data, int latch, int clock);
   ~NESController();
-
-  /* Returns a vector of integers, 8 integers wide, each containing
-     a 1 or 0, a 1 if the button is currently down, a 0 if not. */
-  int* pollState();  
+  
+  void run();
+  
+  void toggleRecording();
+  int isRecording();
+ 
+  int** getReplayStates();
+  
+  void registerListeners(void (*)(int), void (*)(int));
+  void unregisterListeners();
 };
 
 #endif
