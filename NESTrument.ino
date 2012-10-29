@@ -54,20 +54,13 @@ void playToneFromState(int button)
 void playTonesFromReplay()
 {
   int** replay_states = controller.getReplayStates();
-  for(int i = 0; i < 250; i++)
+  for(int i = 0; i < NESController::RECORD_BUFFER_MAX; i++)
   {
     if(replay_states[i] == 0)
       return;
       
-    for(int j = 0; j < 8; j++)
-    {
-      if(replay_states[i][j] == 1)
-      {
-        playToneFromState(j);
-        break;
-      }
-    }
-    delay(40);
+    if(i!=0) delay(replay_states[i][1]);
+    playToneFromState(replay_states[i][0]);
   }
 }
 

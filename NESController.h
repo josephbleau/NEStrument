@@ -18,17 +18,21 @@ namespace NESControllerDummies
 }
 
 class NESController {
+public:
+  static const int RECORD_BUFFER_MAX = 64;
+  
+private:
   int data_line;
   int clock_line;
   int latch_line;
   
   void (*keyPressed)(int);
   void (*keyReleased)(int);
-  
-  int recording_timer;
+
   int recording;
-  int* recording_buffer[250];
+  int* recording_buffer[NESController::RECORD_BUFFER_MAX];
   int buffer_position;
+  int last_button_time;
   
   int* current_state;
   int* last_state;

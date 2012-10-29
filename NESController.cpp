@@ -65,6 +65,24 @@ void NESController::run()
       if(current_state[i] == HIGH)
       {
         keyPressed(i);
+        
+        if(isRecording())
+        {
+          recording_buffer[buffer_position] = (int*) malloc(sizeof(int)*2);
+          recording_buffer[buffer_position][0] = i;
+          recording_buffer[buffer_position][1] = millis() - last_button_time;
+          
+          last_button_time = millis();
+          
+          buffer_position = buffer_position + 1;
+          
+          if(buffer_position == RECORD_BUFFER_MAX)
+          {
+            tone(8, 55);
+            buffer_position = 0;
+            recording = false;
+          }
+        }
       }
       else
       {
@@ -73,45 +91,28 @@ void NESController::run()
     }
   }
   
-  if(isRecording())
-  {
-    if(millis() - recording_timer >= 40)
-    {
-      recording_timer = millis();
-      recording_buffer[buffer_position] = current_state;
-      buffer_position = buffer_position + 1;
-      
-      if(buffer_position == 249)
-      {
-        buffer_position = 0;
-        toggleRecording();
-      }
-    }
-  }
-  
-  if(delete_state != 0 && !isRecording())
-  {
-    free(delete_state);
-  }
+ 
+  free(delete_state);
 }
 
 void NESController::toggleRecording()
 {
   recording = !recording;
   
-  if(recording)
+  if (!recording)
   {
-    recording_timer = millis();
-  }
-  else
-  {
-    for(int i = 0; i < 250; i++)
+    for(int i = 0; i < RECORD_BUFFER_MAX; i++)
     {
       if(recording_buffer[i] != 0)
       {
         delete recording_buffer[i];
+        recording_buffer[i] = 0;
       }
     }
+  }
+  else
+  {
+    last_button_time = millis();
   }
 }
 
