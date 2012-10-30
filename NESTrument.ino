@@ -54,13 +54,28 @@ void playToneFromState(int button)
 void playTonesFromReplay()
 {
   int** replay_states = controller.getReplayStates();
+  
+  /* Iterate over our stored replay state */
   for(int i = 0; i < NESController::RECORD_BUFFER_MAX; i++)
   {
+    /* End of recording, bail. */
     if(replay_states[i] == 0)
       return;
-      
-    if(i!=0) delay(replay_states[i][1]);
-    playToneFromState(replay_states[i][0]);
+   
+    noTone(speakerLine);
+    
+    /* Time between this note and last note, delay. */
+    if(i!=0) delay(replay_states[i][2]);
+     
+    /* Every element in the recording state is both
+       when a key is released, and how long it has been pressed for.
+       When we see a note, play it for the time it was down for. */
+       
+    int time = millis();
+    while(millis() - time < replay_states[i][1])
+    {
+      playToneFromState(replay_states[i][0]);
+    }   
   }
 }
 

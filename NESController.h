@@ -32,7 +32,8 @@ private:
   int recording;
   int* recording_buffer[NESController::RECORD_BUFFER_MAX];
   int buffer_position;
-  int last_button_time;
+  int down_timers[8];
+  int last_note_recorded;
   
   int* current_state;
   int* last_state;
